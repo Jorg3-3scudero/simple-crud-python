@@ -12,7 +12,7 @@ Sistema de gestión de inventario por línea de comandos construido en Python.
 
 ##  Cómo usar
 ```bash
-python3 crud_productos.py
+python3 main.py
 ```
 
 ##  Tecnologías
