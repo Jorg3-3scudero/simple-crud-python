@@ -22,6 +22,7 @@ def agg_producto(precios):
         
         precios[clave] = valor
         print(f"✓ {clave} agregado con precio ${valor:,}")
+        
 
 def actualizar_producto(precios):
     while True:#loop para que el usuario siga agrando items a gusto hasta dada la condicion "q"

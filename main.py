@@ -1,13 +1,9 @@
-#CRUD SIMPLE SIN BASE DE DATOS NI STOCK DE ITEMS
-#diccionario precios
+#imports
+import json
+with open("data.json", "r") as data: #abrimos el archivo json y lo leemos con "r", y ponemos esta informacion en el dict precios
+    precios = json.load(data)
 
-from functions import consultar_precio, agg_producto, actualizar_producto, eliminar_producto, catalogo
-
-precios = {"leche": 5000,
-           "queso": 4500,
-           "salchicha": 6200,
-           "huevos x 12": 10000,
-           "dulce": 500}
+from functions import consultar_precio, agg_producto, actualizar_producto, eliminar_producto, catalogo #importamos las funciones desde el modulo funciones
 
 while True:
     print("\n----------MENU----------")#opciones para usuario
@@ -24,10 +20,16 @@ while True:
         consultar_precio(precios)
     elif opcion == "2": #agregar producto
         agg_producto(precios)
+        with open("data.json", "w") as data:
+            json.dump(precios, data, indent=4)
     elif opcion == "3": #actualizar producto
         actualizar_producto(precios)
+        with open("data.json", "w") as data:
+            json.dump(precios, data, indent=4)
     elif opcion == "4":
         eliminar_producto(precios)
+        with open("data.json", "w") as data:
+            json.dump(precios, data, indent=4)
     elif opcion == "5":
         catalogo(precios)
     elif opcion == "6":
