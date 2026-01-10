@@ -1,5 +1,6 @@
 #imports
 from functions import Tienda
+from utils import verification, empty_validation, confirm_action
 
 def main():
     tienda = Tienda("data.json")
@@ -27,12 +28,24 @@ def main():
                     print("Dato ingresado no válido")
         elif opcion == "2": #agregar producto
             while True:
-                clave = input("Ingrese el item a agregar (q para salir): ").lower()
-                if clave == "q":
+                clave = empty_validation("Ingrese el item a agregar")
+                if clave is None:
                     break
-                valor = input("Ingrese el precio del item: ")
-                tienda.agregar_producto(clave, int(valor))
-                print(f"{clave.capitalize()} agregado con precio ${int(valor):,}")
+                
+                # Verificar si ya existe
+                if tienda.producto_existe(clave):
+                    precio_actual = tienda.consultar_precios(clave)
+                    print(f" {clave.capitalize()} ya existe con precio ${precio_actual:,}")
+                    
+                    
+                    if not confirm_action("¿Desea sobrescribirlo?"):
+                        print("Operación cancelada")
+                        continue  # Vuelve a pedir otro producto
+                
+                # Si llegaste aquí, o no existía o el usuario confirmó sobrescribir
+                valor = verification()
+                tienda.agregar_producto(clave, valor)
+                print(f"{clave.capitalize()} agregado con precio ${valor:,}")
         elif opcion == "3": #actualizar producto
             while True:
                 keyupdate = input("Ingrese el item a actualizar (q para salir): ").lower()
@@ -40,9 +53,9 @@ def main():
                     break
                 if keyupdate in tienda.precios:
                     print(f"Precio actual: ${tienda.precios[keyupdate]:,}")
-                    valueupdate = input("Ingrese el precio nuevo: ")
-                    tienda.actualizar_producto(keyupdate, int(valueupdate))
-                    print(f"{keyupdate.capitalize()} actualizado a ${int(valueupdate):,}")
+                    valueupdate = verification()
+                    tienda.actualizar_producto(keyupdate, valueupdate)
+                    print(f"{keyupdate.capitalize()} actualizado a ${valueupdate:,}")
                 else:
                     print(f"{keyupdate.capitalize()} no existe")
         elif opcion == "4":

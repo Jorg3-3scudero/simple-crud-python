@@ -1,11 +1,22 @@
 #funciones
 import json
+import os
 
 class Tienda: #made all class related methods for scalability
     def __init__(self, archivo_datos="data.json"):
         self.archivo_datos = archivo_datos
-        with open(self.archivo_datos, "r") as data:
-            self.precios = json.load(data)
+
+        if not os.path.exists(self.archivo_datos):
+            self.precios = {}
+            self.guardar_datos()
+        else:
+            try:
+                with open(self.archivo_datos, "r") as data:
+                    self.precios = json.load(data)
+            except json.JSONDecodeError:
+                print(f"⚠️  {self.archivo_datos} está corrupto. Creando uno nuevo.")
+                self.precios = {}
+                self.guardar_datos()
 
     def guardar_datos(self): #upgraded to have a method for saving data on the functions module, for cleaner readbility
         with open(self.archivo_datos, "w") as data:
@@ -32,3 +43,6 @@ class Tienda: #made all class related methods for scalability
 
     def catalogo_completo(self):
         return self.precios
+    
+    def producto_existe(self, producto):
+        return producto in self.precios
