@@ -1,11 +1,9 @@
 #imports
-import json
-from functions import consultar_precio, agg_producto, actualizar_producto, eliminar_producto, catalogo #importamos las funciones desde el modulo funciones
+from functions import Tienda
+from utils import verification, empty_validation, confirm_action
 
 def main():
-    with open("data.json", "r") as data: #abrimos el archivo json y lo leemos con "r", y ponemos esta informacion en el dict precios
-        precios = json.load(data)
-
+    tienda = Tienda("data.json")
 
     while True:
         print("\n----------MENU----------")#opciones para usuario
@@ -16,24 +14,74 @@ def main():
         print("5. Ver catálogo completo")
         print("6. Salir")
 
-        opcion = input("Ingrese una opcion: ")#input usuario para opciones
+        opcion = input("Ingrese una opcion: ").strip()#input usuario para opciones
 
         if opcion == "1": #consultar precio
-            consultar_precio(precios)
+            while True:
+                user = empty_validation("Ingrese el producto").lower()
+                if user is None:
+                    break
+                precio = tienda.consultar_precios(user)
+                if precio is not None:
+                    print(f"{user.capitalize()}: ${precio:,}")
+                else:
+                    print("Dato ingresado no válido")
         elif opcion == "2": #agregar producto
-            agg_producto(precios)
-            with open("data.json", "w") as data:
-                json.dump(precios, data, indent=4)
+            while True:
+                clave = empty_validation("Ingrese el item a agregar")
+                if clave is None:
+                    break
+                
+                # Verificar si ya existe
+                if tienda.producto_existe(clave):
+                    precio_actual = tienda.consultar_precios(clave)
+                    print(f" {clave.capitalize()} ya existe con precio ${precio_actual:,}")
+                    
+                    
+                    if not confirm_action("¿Desea sobrescribirlo?"):
+                        print("Operación cancelada")
+                        continue  # Vuelve a pedir otro producto
+                
+                # Si llegaste aquí, o no existía o el usuario confirmó sobrescribir
+                valor = verification()
+                tienda.agregar_producto(clave, valor)
+                print(f"{clave.capitalize()} agregado con precio ${valor:,}")
         elif opcion == "3": #actualizar producto
-            actualizar_producto(precios)
-            with open("data.json", "w") as data:
-                json.dump(precios, data, indent=4)
+            while True:
+                keyupdate = input("Ingrese el item a actualizar (q para salir): ").lower()
+                if keyupdate == "q":
+                    break
+                if keyupdate in tienda.precios:
+                    print(f"Precio actual: ${tienda.precios[keyupdate]:,}")
+                    valueupdate = verification()
+                    tienda.actualizar_producto(keyupdate, valueupdate)
+                    print(f"{keyupdate.capitalize()} actualizado a ${valueupdate:,}")
+                else:
+                    print(f"{keyupdate.capitalize()} no existe")
         elif opcion == "4":
-            eliminar_producto(precios)
-            with open("data.json", "w") as data:
-                json.dump(precios, data, indent=4)
+            while True:
+                keydelete = input("Ingrese el item a eliminar (q para salir): ").lower()
+                if keydelete == "q":
+                    break
+                if keydelete in tienda.precios:
+                    confirmar = input(f"¿Seguro que desea eliminar {keydelete.capitalize()}? (si/no): ").lower()
+                    if confirmar == "si":
+                        tienda.eliminar_producto(keydelete)
+                        print(f"{keydelete.capitalize()} eliminado correctamente")
+                    else:
+                        print("Eliminación cancelada")
+                else:
+                    print(f"{keydelete.capitalize()} no existe")
         elif opcion == "5":
-            catalogo(precios)
+            precios = tienda.catalogo_completo()
+            if not precios:
+                print("El catálogo está vacío")
+            else:
+                print()
+                print("CATÁLOGO COMPLETO")
+                for item, precio in precios.items():
+                    print(f"{item.capitalize()}: ${precio:,}")
+                print(f"\nTotal de productos: {len(precios)}")
         elif opcion == "6":
             print("Gracias por usar el sistema CRUD!")
             break
@@ -42,3 +90,6 @@ def main():
 
 if __name__=='__main__':
     main()
+
+
+
