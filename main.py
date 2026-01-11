@@ -18,8 +18,8 @@ def main():
 
         if opcion == "1": #consultar precio
             while True:
-                user = input("Ingrese el producto (q para salir): ").lower()
-                if user == "q":
+                user = empty_validation("Ingrese el producto").lower()
+                if user is None:
                     break
                 precio = tienda.consultar_precios(user)
                 if precio is not None:
@@ -92,5 +92,4 @@ if __name__=='__main__':
     main()
 
 
-#TODO ADD VALIDATION OF INPUT ON ALL THE OPTIONS
 
