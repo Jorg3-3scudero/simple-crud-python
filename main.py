@@ -42,7 +42,7 @@ def main():
                         print("Operación cancelada")
                         continue  # Vuelve a pedir otro producto
                 
-                # Si llegaste aquí, o no existía o el usuario confirmó sobrescribir
+                
                 valor = verification()
                 tienda.agregar_producto(clave, valor)
                 print(f"{clave.capitalize()} agregado con precio ${valor:,}")

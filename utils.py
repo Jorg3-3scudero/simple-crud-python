@@ -1,15 +1,18 @@
 def verification():
     while True:
         valor = input("Ingrese el precio del item: ").strip()
-        
-        if valor.isdigit() and int(valor) > 0:
-            return int(valor)
-        
-        print("Ingrese un precio válido (número mayor a 0)")
+    
+        try:
+            precio = int(valor)
+            if precio > 0:
+                return precio
+            print('El valor debe ser mayor a 0')
+        except ValueError:
+            print('Error: porfavor ingrese solo numeros')
 
 def empty_validation(mensaje):
     while True:
-        valor = input(f"{mensaje} (q, para salir): ").lower().strip()
+        valor = input(f"{mensaje} (q para salir): ").lower().strip()
         if valor == "q":
             return None
         if not valor:
